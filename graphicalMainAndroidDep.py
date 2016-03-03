@@ -7,7 +7,7 @@ def mainWindow():
 	mainWindowDep.title("Déploiement Android")
 	mainWindowDep.resizable(width=FALSE, height=FALSE)
 
-	photo = PhotoImage(file="~/android-logo-png.png")
+	photo = PhotoImage(file="./android-logo-png.png")
 
 	canvas = Canvas(mainWindowDep,width=580, height=320)
 	canvas.create_image(0, 0, anchor=NW, image=photo)
