@@ -7,7 +7,7 @@ def wifiConnected(ip):
 
 	wifiInterfaceWindow.title("Connection au wifi.")
 
-	photo = PhotoImage(file="~/wifi.png")
+	photo = PhotoImage(file="./wifi.png")
 	label = Label(wifiInterfaceWindow, text="L'appareil à été connecté avec succès.")
 	ipLabel = Label(wifiInterfaceWindow, text="Votre ip est "+ip)
 
