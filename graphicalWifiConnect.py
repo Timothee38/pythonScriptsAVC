@@ -19,5 +19,22 @@ def wifiConnected(ip):
 	ipLabel.pack()
 
 	wifiInterfaceWindow.mainloop()
+def wifiNotWorking():
+	wifiInterfaceWindow = Tk() #Initialisation d'une fenetre Tk vide
+
+	wifiInterfaceWindow.title("Connection au wifi.")
+
+	photo = PhotoImage(file="~/wifi.png")
+	label = Label(wifiInterfaceWindow, text="L'appareil n'as pas pu être connecté.")
+
+	canvas = Canvas(wifiInterfaceWindow,width=100, height=72)
+	canvas.create_image(0, 0, anchor=NW, image=photo)
+	canvas.pack()
+
+	label.pack()
+
+	wifiInterfaceWindow.mainloop()
+
 
 wifiConnected("192.168.5.2")
+wifiNotWorking()
