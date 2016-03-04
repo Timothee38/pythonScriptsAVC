@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from Tkinter import *
-from PIL import *
+from PIL import Image, ImageTk
 
 def wifiConnected(ip):
 	wifiInterfaceWindow = Tk() #Initialisation d'une fenetre Tk vide
