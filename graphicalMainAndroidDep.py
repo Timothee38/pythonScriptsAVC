@@ -11,7 +11,7 @@ class WifiFirst(Frame):
 		Frame.__init__(self, master)
 		#Success because testing purposes
 		self.master = master
-		self.photo = PhotoImage(file="~/wifi.png")
+		self.photo = PhotoImage(file="wifi.png")
 		self.label = Label(self, text="L'appareil à été connecté avec succès.")
 		self.ipLabel = Label(self, text="Votre ip est x.x.x.x")
 
@@ -39,7 +39,7 @@ class DeleteAppsFirst(Frame):
 		Frame.__init__(self, master)
 		self.master=master
 
-		self.photo = PhotoImage(file="~/delete.png")
+		self.photo = PhotoImage(file="delete.png")
 
 		self.canvas = Canvas(self, width=400, height=130)
 		self.canvas.create_image(135, 0, anchor=NW, image=self.photo)
@@ -70,7 +70,7 @@ class CloneFirst(Frame):
 		Frame.__init__(self, master)
 		self.master = master
 
-		self.photo = PhotoImage(file="~/plugin.png")
+		self.photo = PhotoImage(file="plugin.png")
 
 		self.canvas = Canvas(self, width=440, height=214)
 		self.canvas.create_image(0, 0, anchor=NW, image=self.photo)
@@ -92,7 +92,7 @@ class AddAppsFirst(Frame):
 		Frame.__init__(self, master)
 		self.master = master
 
-		self.photo = PhotoImage(file="~/FileUpload.png")
+		self.photo = PhotoImage(file="FileUpload.png")
 
 		self.canvas = Canvas(self, width=330, height=170)
 		self.canvas.create_image(0, 0, anchor=NW, image=self.photo)
@@ -112,7 +112,7 @@ class MainMenu(Frame):
 		Frame.__init__(self, master)
 		self.master=master
 
-		self.photo = PhotoImage(file="~/android-logo-png.png")
+		self.photo = PhotoImage(file="android-logo-png.png")
 
 		self.canvas = Canvas(self,width=580, height=320)
 		self.canvas.create_image(0, 0, anchor=NW, image=self.photo)
