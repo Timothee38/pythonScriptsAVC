@@ -7,7 +7,7 @@ def wifiConnected(ip):
 
 	wifiInterfaceWindow.title("Connection au wifi.")
 
-	photo = PhotoImage(file="./wifi.png")
+	photo = PhotoImage(file="~/wifi.png")
 	label = Label(wifiInterfaceWindow, text="L'appareil à été connecté avec succès.")
 	ipLabel = Label(wifiInterfaceWindow, text="Votre ip est "+ip)
 
@@ -15,10 +15,14 @@ def wifiConnected(ip):
 	canvas.create_image(0, 0, anchor=NW, image=photo)
 	canvas.pack()
 
-	label.pack()
-	ipLabel.pack()
+	buttonOk = Button(wifiInterfaceWindow,text="Ok")
+
+	label.pack(pady=5, padx=5)
+	ipLabel.pack(pady=5, padx=5)
+	buttonOk.pack(pady=5, padx=5)
 
 	wifiInterfaceWindow.mainloop()
+
 def wifiNotWorking():
 	wifiInterfaceWindow = Tk() #Initialisation d'une fenetre Tk vide
 
@@ -31,10 +35,26 @@ def wifiNotWorking():
 	canvas.create_image(0, 0, anchor=NW, image=photo)
 	canvas.pack()
 
-	label.pack()
+	buttonOk = Button(wifiInterfaceWindow,text="Ok")
+
+	label.pack(pady=5, padx=5)
+	buttonOk.pack(pady=5, padx=5)
 
 	wifiInterfaceWindow.mainloop()
 
+def wifiConnecting():
+	wifiInterfaceWindow = Tk() #Initialisation d'une fenetre Tk vide
 
-wifiConnected("192.168.5.2")
-wifiNotWorking()
+	wifiInterfaceWindow.title("Connection au wifi.")
+
+	photo = PhotoImage(file="~/wifi.png")
+	label = Label(wifiInterfaceWindow, text="Connection et récuperation de l'IP en cours...")
+
+	canvas = Canvas(wifiInterfaceWindow,width=100, height=72)
+	canvas.create_image(0, 0, anchor=NW, image=photo)
+	canvas.pack()
+
+	label.pack(pady=5, padx=5)
+
+	wifiInterfaceWindow.mainloop()
+
