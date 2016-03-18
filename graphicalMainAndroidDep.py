@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from Tkinter import *
+from tkFileDialog import *
+from tkMessageBox import *
 import os
 import subprocess
 
@@ -15,6 +17,10 @@ nomFichierPackages = "/packages.txt"
 genericFilePath = "/home/" + username
 filePathPackages =  genericFilePath + nomFichierPackages
 
+pathToApp = ""
+
+ipList=[]
+
 diff = {}
 packagelist = {}
 
@@ -24,7 +30,7 @@ class PlugTablet(Frame):
 		Frame.__init__(self, master)
 		self.master = master
 
-		self.photo = PhotoImage(file="~/plugin.png")
+		self.photo = PhotoImage(file="plugin.png")
 
 		self.canvas = Canvas(self, width=440, height=214)
 		self.canvas.create_image(0, 0, anchor=NW, image=self.photo)
@@ -68,7 +74,7 @@ class WifiFirst(Frame):
 		Frame.__init__(self, master)
 		#Success because testing purposes
 		self.master = master
-		self.photo = PhotoImage(file="~/wifi.png")
+		self.photo = PhotoImage(file="wifi.png")
 		self.label = Label(self, text="L'appareil à été connecté avec succès.")
 		self.ipLabel = Label(self, text="Votre ip est x.x.x.x")
 
@@ -91,7 +97,7 @@ class WifiLoading(Frame):
 	def __init__(self, master):
 		Frame.__init__(self, master)
 		self.master = master
-		self.photo = PhotoImage(file="~/wifi.png")
+		self.photo = PhotoImage(file="wifi.png")
 		self.label = Label(self, text="Connection et récuperation de l'IP en cours...")
 
 		self.canvas = Canvas(self,width=100, height=72)
@@ -110,7 +116,7 @@ class DeleteAppsCheckboxes(Frame):
 		Frame.__init__(self, master)
 		self.master=master
 
-		self.photo = PhotoImage(file="~/delete.png")
+		self.photo = PhotoImage(file="delete.png")
 
 		self.canvas = Canvas(self, width=400, height=130)
 		self.canvas.create_image(135, 0, anchor=NW, image=self.photo)
@@ -157,22 +163,17 @@ class DeleteAppsCheckboxes(Frame):
 		self.newWindow = Toplevel(self.master)
 		diff = {} #Reinitialisation de diff
 		if failureCount!=0:
-			self.app = DeletingFilesFailure(self.newWindow)
+			self.app = Failure(self.newWindow)
 		else:
-			self.app = DeletingFilesSuccess(self.newWindow)
+			self.app = Success(self.newWindow)
 
-	def delete_success(self):
-		self.destroy()
-		self.master.withdraw()
-		self.newWindow = Toplevel(self.master)
-		self.app = DeletingFilesSuccess(self.newWindow)
 
-class DeletingFilesSuccess(Frame):
+class Success(Frame):
 	def __init__(self,master):
 		Frame.__init__(self,master)
 		self.master = master
 
-		self.photo = PhotoImage(file="~/AndroidSuccess.png")
+		self.photo = PhotoImage(file="AndroidSuccess.png")
 
 		self.canvas = Canvas(self, width=350, height=275)
 		self.canvas.create_image(0, 0, anchor=NW, image=self.photo)
@@ -192,18 +193,18 @@ class DeletingFilesSuccess(Frame):
 		self.master.withdraw()
 
 
-class DeletingFilesFailure(Frame):
+class Failure(Frame):
 	def __init__(self,master):
 		Frame.__init__(self,master)
 		self.master = master
 
-		self.photo = PhotoImage(file="~/AndroidFailure.png")
+		self.photo = PhotoImage(file="AndroidFailure.png")
 
 		self.canvas = Canvas(self, width=350, height=275)
 		self.canvas.create_image(0, 0, anchor=NW, image=self.photo)
 		self.canvas.pack()
 
-		self.operation = Label(self, text="La suppresion a échoué !")
+		self.operation = Label(self, text="L'opération a échoué !")
 		self.operation.pack(pady=5, padx=5)
 
 		self.buttonOk = Button(self,text="Ok",command=self.close_windows)
@@ -224,7 +225,7 @@ class CloneFirst(Frame):
 		Frame.__init__(self, master)
 		self.master = master
 
-		self.photo = PhotoImage(file="~/plugin.png")
+		self.photo = PhotoImage(file="plugin.png")
 
 		self.canvas = Canvas(self, width=440, height=214)
 		self.canvas.create_image(0, 0, anchor=NW, image=self.photo)
@@ -248,19 +249,73 @@ class AddAppsFirst(Frame):
 		Frame.__init__(self, master)
 		self.master = master
 
-		self.photo = PhotoImage(file="~/FileUpload.png")
+		self.photo = PhotoImage(file="FileUpload.png")
 
 		self.canvas = Canvas(self, width=330, height=170)
 		self.canvas.create_image(0, 0, anchor=NW, image=self.photo)
 		self.canvas.pack()
 
-		operation = Label(self, text="Choisissez votre fichier.")
-		operation.pack(pady=5, padx=5)
+		self.operation = Label(self, text="Choisissez votre fichier a installer.")
+		self.operation.pack(pady=5, padx=5)
 
-		browse = Button(self, text='Parcourir...')
-		browse.pack(pady=5)
+		self.browse = Button(self, text='Parcourir...', command=self.openFileToInstall)
+		self.browse.pack(pady=5)
 
 		self.pack()
+
+	def openFileToInstall(self):
+		global pathToApp
+		pathToApp = askopenfilename(filetypes=[('Android Package File', '*.apk')])
+		print pathToApp
+		self.destroy()
+		self.master.withdraw()
+		self.newWindow = Toplevel(self.master)
+		self.app = AddAppsConfirm(self.newWindow)
+
+
+class AddAppsConfirm(Frame):
+	def __init__(self,master):
+		global pathToApp
+		Frame.__init__(self,master)
+		self.master=master
+
+		apkList = pathToApp.split("/")
+		apkName = apkList[-1]
+
+		self.photo = PhotoImage(file="androidQuestion.png")
+
+		self.canvas = Canvas(self, width=174, height=70)
+		self.canvas.create_image(0, 0, anchor=NW, image=self.photo)
+		self.canvas.pack(padx=10)
+
+		self.areYouSure = Label(self, text="Installer "+apkName+" ?")
+		self.frame = Frame(self)
+		self.oui = Button(self.frame, text="Oui",command=self.installApp)
+		self.non = Button(self.frame, text="Non", command=self.close_windows)
+
+		self.areYouSure.pack(pady=5, padx=5)
+		self.frame.pack(pady=5, padx=5)
+		self.non.pack(side=RIGHT)
+		self.oui.pack(side=LEFT)
+
+		self.pack()
+
+	def close_windows(self):
+		self.destroy()
+		self.master.withdraw()
+
+	def installApp(self):
+		global pathToApp
+		resultat = os.popen("adb install " + pathToApp).read()
+		print resultat
+		self.destroy()
+		self.master.withdraw()
+		self.newWindow = Toplevel(self.master)
+		if not resultat.endswith("Success\r\n"):
+			Failure(self.newWindow)
+		else:
+			Success(self.newWindow)
+
 
 
 
@@ -271,13 +326,13 @@ class MainMenu(Frame):
 		Frame.__init__(self, master)
 		self.master=master
 
-		self.photo = PhotoImage(file="~/android-logo-png.png")
+		self.photo = PhotoImage(file="android-logo-png.png")
 
 		self.canvas = Canvas(self,width=580, height=320)
 		self.canvas.create_image(0, 0, anchor=NW, image=self.photo)
 		self.canvas.pack()
 
-		self.texteWifiFirst = Label(self, text="Attention: Veuillez d'abord configurer tous vos appareils en wifi.", fg="red").pack(pady=5)
+		self.texteWifiFirst = Label(self, text="Attention: Veuillez d'abord connecter tous vos appareils en wifi.", fg="red").pack(pady=5)
 
 		self.frame = Frame(self)
 
@@ -287,9 +342,9 @@ class MainMenu(Frame):
 
 		self.addBtn = Button(self.frame, text="Ajouter des applications", width=20, height=3, command=self.openAdd).pack(side=LEFT,padx=5)
 
-		self.wifiBtn = Button(self.frameBas, text="Connection wifi", width=20, height=3, command=self.openWifi).pack(side=LEFT,padx=5)
+		#self.wifiBtn = Button(self.frameBas, text="Connection wifi", width=20, height=3, command=self.openWifi).pack(side=LEFT,padx=5)
 
-		self.cloneBtn = Button(self.frameBas, text="Cloner une tablette témoin", width=20, height=3, command=self.openClone).pack(side=LEFT,padx=5)
+		self.cloneBtn = Button(self.frameBas, text="Cloner une tablette témoin", width=45, height=3, command=self.openClone).pack()
 
 		self.frame.pack()
 		self.frameBas.pack(pady=5)
