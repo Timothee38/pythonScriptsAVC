@@ -24,7 +24,7 @@ ipList=[]
 diff = {}
 packagelist = {}
 
-#Gestion Brancement tablette
+#Gestion Branchement tablette
 class PlugTablet(Frame):
 	def __init__(self,master):
 		Frame.__init__(self, master)
