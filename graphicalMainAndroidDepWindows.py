@@ -65,6 +65,7 @@ class PlugTablet(Frame):
                         apkName = coupeLigne[0].replace("package:/data/app/","")
                         diff[apkName] = coupeLigne[1]
                         packagelist[apkName] = coupeLigne[1]
+                fichierPackages.close()        
                 self.app = DeleteAppsCheckboxes(self.newWindow)
             elif afterPluggedCommand=="add":
                 self.app = AddAppsFirst(self.newWindow)
@@ -217,7 +218,7 @@ class AddAppsFirst(Frame):
 		Frame.__init__(self, master)
 		self.master = master
 
-		self.image = Image.open("AndroidFailure.png")
+		self.image = Image.open("FileUpload.png")
 		self.photo = ImageTk.PhotoImage(self.image)
 
 		self.canvas = Canvas(self, width=330, height=170)
@@ -276,7 +277,9 @@ class AddAppsConfirm(Frame):
 
     def installApp(self):
         global pathToApp
-        resultat = os.popen("adb install " + pathToApp).read()
+        install = 'adb install "' + pathToApp + '"'
+        print install
+        resultat = os.popen(install).read()
         print resultat
         self.destroy()
         self.master.withdraw()
