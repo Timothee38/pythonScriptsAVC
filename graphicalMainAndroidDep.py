@@ -13,9 +13,28 @@ cutUsername = username.split('\n')
 username = cutUsername[0]
 
 ##Data pour suppression packages
-nomFichierPackages = "/packages.txt"
+nomFichierIps = "/androidDepIpList.txt"
+nomFichierPackages = "/androidDepPackages.txt"
+nomFichierTemoin = "/androidDepTemoin.txt"
+apkFolder = "/androidDepApk"
+
 genericFilePath = "/home/" + username
+
+filePathAPKs = genericFilePath + apkFolder
+if not os.path.exists(filePathAPKs):
+	os.makedirs(filePathAPKs)
+
+for the_file in os.listdir(filePathAPKs):
+	file_path = os.path.join(filePathAPKs, the_file)
+	try:
+		if os.path.isfile(file_path):
+			os.unlink(file_path)
+	except Exception, e:
+		print e
 filePathPackages =  genericFilePath + nomFichierPackages
+filePathIPs = genericFilePath + nomFichierIps
+filePathTemoin = genericFilePath + nomFichierTemoin
+listeIPs = []
 
 pathToApp = ""
 
@@ -64,49 +83,11 @@ class PlugTablet(Frame):
 				self.app = DeleteAppsCheckboxes(self.newWindow)
 			elif afterPluggedCommand=="add":
 				self.app = AddAppsFirst(self.newWindow)
-			elif afterPluggedCommand=="wifi":
-				self.app = WifiFirst(self.newWindow)
+			##elif afterPluggedCommand=="wifi":
+			##	self.app = WifiFirst(self.newWindow)
+			elif afterPluggedCommand=="clone":
+				self.app = GetTemoin(self.newWindow)
 
-
-##WIFI
-class WifiFirst(Frame):
-	def __init__(self,master):
-		Frame.__init__(self, master)
-		#Success because testing purposes
-		self.master = master
-		self.photo = PhotoImage(file="wifi.png")
-		self.label = Label(self, text="L'appareil à été connecté avec succès.")
-		self.ipLabel = Label(self, text="Votre ip est x.x.x.x")
-
-		self.canvas = Canvas(self,width=100, height=72)
-		self.canvas.create_image(0, 0, anchor=NW, image=self.photo)
-		self.canvas.pack()
-
-		self.buttonOk = Button(self,text="Ok",command=self.close_windows)
-
-		self.label.pack(pady=5, padx=5)
-		self.ipLabel.pack(pady=5, padx=5)
-		self.buttonOk.pack(pady=5, padx=5)
-
-		self.pack()
-
-	def close_windows(self):
-		self.master.destroy()
-
-class WifiLoading(Frame):
-	def __init__(self, master):
-		Frame.__init__(self, master)
-		self.master = master
-		self.photo = PhotoImage(file="wifi.png")
-		self.label = Label(self, text="Connection et récuperation de l'IP en cours...")
-
-		self.canvas = Canvas(self,width=100, height=72)
-		self.canvas.create_image(0, 0, anchor=NW, image=self.photo)
-		self.canvas.pack()
-
-		self.label.pack(pady=5, padx=5)
-
-		self.pack()
 
 ##DELETE APPS
 class DeleteAppsCheckboxes(Frame):
@@ -192,7 +173,6 @@ class Success(Frame):
 		self.destroy()
 		self.master.withdraw()
 
-
 class Failure(Frame):
 	def __init__(self,master):
 		Frame.__init__(self,master)
@@ -220,8 +200,8 @@ class Failure(Frame):
 
 
 ##CLONE DEVICE
-class CloneFirst(Frame):
-	def __init__(self, master):
+class Clone(Frame):
+	def __init__(self,master):
 		Frame.__init__(self, master)
 		self.master = master
 
@@ -231,17 +211,69 @@ class CloneFirst(Frame):
 		self.canvas.create_image(0, 0, anchor=NW, image=self.photo)
 		self.canvas.pack()
 
-		self.brancher = Label(self, text="Brancher la tablette témoin.")
+		self.brancher = Label(self, text="Brancher la tablette par USB et cliquez sur OK.")
 		self.brancher.pack(pady=5, padx=5)
 
-		self.boutonOk = Button(self, text="Ok")
+		self.boutonOk = Button(self, text="Ok", command=self.close_windows)
 		self.boutonOk.pack(pady=(5,10))
 
 		self.pack()
 
 
+	def close_windows(self):
+		self.destroy()
+		self.master.withdraw()
+		#self.newWindow = Toplevel(self.master)
+		#self.app = GetTemoin(self.newWindow)
 
 
+class GetTemoin(Frame):
+	def __init__(self,master):
+		Frame.__init__(self,master)
+		self.master=master
+
+		self.photo = PhotoImage(file="file-transfer.png")
+
+		self.canvas = Canvas(self, width=400, height=310)
+		self.canvas.create_image(0, 0, anchor=NW, image=self.photo)
+		self.canvas.pack()
+
+		self.working = Label(self,text=u"Informations récupérées")
+		self.working.pack(pady=5)
+
+		self.boutonOK = Button(self, text="OK", command=self.next_window)
+		self.boutonOK.pack(pady=5)
+
+		self.pack()
+
+		self.recup()
+
+	def recup(self):
+		global filePathTemoin, filePathAPKs
+		os.system("adb shell pm list packages -f -3 | grep apk* > " + filePathTemoin)
+		fichierTemoin = open(filePathTemoin, 'r')
+		os.system("cd "+filePathAPKs)
+		for ligne in fichierTemoin.readlines():
+			package = ligne.split("=")
+			toPull = package[0].split(":")
+			os.system("adb pull " + toPull[1] + " " + filePathAPKs)
+
+		fichierTemoin.close()
+
+	def next_window(self):
+		self.destroy()
+		self.master.withdraw()
+		self.newWindow = Toplevel(self.master)
+		self.app = GetWifiTab(self.newWindow)
+
+class DoOperations(Frame):
+	def __init__(self,master):
+		Frame.__init__(self,master)
+		self.master = master
+
+
+
+		self.pack()
 
 ##ADD APPS
 class AddAppsFirst(Frame):
@@ -357,15 +389,17 @@ class MainMenu(Frame):
 		afterPluggedCommand="wifi"
 		self.newWindow = Toplevel(self.master)
 		self.app = PlugTablet(self.newWindow)
+
 	def openDelete(self):
 		global afterPluggedCommand
 		afterPluggedCommand="delete"
 		self.newWindow = Toplevel(self.master)
 		self.app = PlugTablet(self.newWindow)
-
 	def openClone(self):
+		global afterPluggedCommand
+		afterPluggedCommand="clone"
 		self.newWindow = Toplevel(self.master)
-		self.app = CloneFirst(self.newWindow)
+		self.app = PlugTablet(self.newWindow)
 	def openAdd(self):
 		global afterPluggedCommand
 		afterPluggedCommand="add"
