@@ -2,9 +2,7 @@
 # -*- coding: utf-8 -*-
 from Tkinter import *
 from tkFileDialog import *
-from tkMessageBox import *
 import os
-import subprocess
 
 #Main variables
 afterPluggedCommand = ""
@@ -12,10 +10,12 @@ username = os.popen('whoami').read()
 cutUsername = username.split('\n')
 username = cutUsername[0]
 
+devices = []
+
 ##Data pour suppression packages
-nomFichierIps = "/androidDepIpList.txt"
 nomFichierPackages = "/androidDepPackages.txt"
 nomFichierTemoin = "/androidDepTemoin.txt"
+
 apkFolder = "/androidDepApk"
 
 genericFilePath = "/home/" + username
@@ -32,13 +32,9 @@ for the_file in os.listdir(filePathAPKs):
 	except Exception, e:
 		print e
 filePathPackages =  genericFilePath + nomFichierPackages
-filePathIPs = genericFilePath + nomFichierIps
 filePathTemoin = genericFilePath + nomFichierTemoin
-listeIPs = []
 
 pathToApp = ""
-
-ipList=[]
 
 diff = {}
 packagelist = {}
@@ -88,7 +84,6 @@ class PlugTablet(Frame):
 			elif afterPluggedCommand=="clone":
 				self.app = GetTemoin(self.newWindow)
 
-
 ##DELETE APPS
 class DeleteAppsCheckboxes(Frame):
 	def __init__(self, master):
@@ -135,6 +130,7 @@ class DeleteAppsCheckboxes(Frame):
 			if status=="1":
 				packageToUninstall = packagelist[apkFileName]
 				uninstall = "adb uninstall " + packageToUninstall
+				print uninstall
 				uninstallList = uninstall.split("\n")
 				uninstall = uninstallList[0].replace("\r","")
 				print uninstall
@@ -147,7 +143,6 @@ class DeleteAppsCheckboxes(Frame):
 			self.app = Failure(self.newWindow)
 		else:
 			self.app = Success(self.newWindow)
-
 
 class Success(Frame):
 	def __init__(self,master):
@@ -197,8 +192,6 @@ class Failure(Frame):
 		self.destroy()
 		self.master.withdraw()
 
-
-
 ##CLONE DEVICE
 class Clone(Frame):
 	def __init__(self,master):
@@ -225,7 +218,6 @@ class Clone(Frame):
 		self.master.withdraw()
 		#self.newWindow = Toplevel(self.master)
 		#self.app = GetTemoin(self.newWindow)
-
 
 class GetTemoin(Frame):
 	def __init__(self,master):
@@ -264,16 +256,154 @@ class GetTemoin(Frame):
 		self.destroy()
 		self.master.withdraw()
 		self.newWindow = Toplevel(self.master)
-		self.app = GetWifiTab(self.newWindow)
+		self.app = UnPlugTemoin(self.newWindow)
 
-class DoOperations(Frame):
+class UnPlugTemoin(Frame):
+	def __init__(self,master):
+		Frame.__init__(self, master)
+		self.master = master
+
+		self.photo = PhotoImage(file="plugin.png")
+
+		self.canvas = Canvas(self, width=440, height=214)
+		self.canvas.create_image(0, 0, anchor=NW, image=self.photo)
+		self.canvas.pack()
+
+		self.brancher = Label(self, text=u"Debranchez l'appareil témoin et cliquez sur OK.")
+		self.brancher.pack(pady=5, padx=5)
+
+		self.boutonOk = Button(self, text="Ok", command=self.close_windows)
+		self.boutonOk.pack(pady=(5,10))
+
+		self.pack()
+
+	def close_windows(self):
+		self.destroy()
+		self.master.withdraw()
+		self.newWindow = Toplevel(self.master)
+		self.app = BranchementAutres(self.newWindow)
+
+class BranchementAutres(Frame):
+	def __init__(self,master):
+		Frame.__init__(self, master)
+		self.master = master
+
+		self.photo = PhotoImage(file="multiple.png")
+
+		self.canvas = Canvas(self, width=450, height=336)
+		self.canvas.create_image(0, 0, anchor=NW, image=self.photo)
+		self.canvas.pack()
+
+		self.brancher = Label(self, text=u"Branchez par USB les appareils à cloner et cliquez sur OK.")
+		self.brancher.pack(pady=5, padx=5)
+
+		self.boutonOk = Button(self, text="Ok", command=self.close_windows)
+		self.boutonOk.pack(pady=(5,10))
+
+		self.pack()
+
+	def close_windows(self):
+		self.destroy()
+		self.master.withdraw()
+		self.newWindow = Toplevel(self.master)
+		self.app = HowMany(self.newWindow)
+
+class HowMany(Frame):
 	def __init__(self,master):
 		Frame.__init__(self,master)
 		self.master = master
 
+		self.photo = PhotoImage(file="androidQuestion.png")
 
+		self.canvas = Canvas(self, width=174, height=150)
+		self.canvas.create_image(0, 0, anchor=NW, image=self.photo)
+		self.canvas.pack()
+
+		self.readDevices()
+
+		self.boutonOk = Button(self, text="Ok", command=self.close_windows)
+		self.boutonOk.pack(pady=(5,10))
 
 		self.pack()
+
+	def readDevices(self):
+		global devices
+		result = os.popen("adb devices").read()
+		for ligne in result.split("\n"):
+			if "\tdevice" in ligne:
+				devices.append(ligne)
+
+		texte = "Il y a " + str(len(devices)) + u" appareils connectés..."
+		self.howmany = Label(self,text=texte)
+		self.howmany.pack(padx=5)
+
+	def close_windows(self):
+		self.destroy()
+		self.master.withdraw()
+		self.newWindow = Toplevel(self.master)
+		self.app = DoOperations(self.newWindow)
+
+class DoOperations(Frame):
+	def __init__(self,master):
+		Frame.__init__(self,master)
+		self.master=master
+
+		self.photo = PhotoImage(file="AndroidSuccess.png")
+
+		self.canvas = Canvas(self, width=350, height=275)
+		self.canvas.create_image(0, 0, anchor=NW, image=self.photo)
+		self.canvas.pack()
+
+		self.texte = Label(self,text=u"Machines clonées avec succès !")
+
+		self.boutonOk = Button(self, text="Ok", command=self.close_windows)
+		self.boutonOk.pack(pady=(5,10))
+
+		self.clonage()
+
+		self.pack()
+
+	def clonage(self):
+		global devices, filePathPackages, filePathTemoin, filePathAPKs
+		for device in devices:
+			serial = device.split("\t")
+			serialNo = serial[0]
+			os.system("adb -s " + serialNo + " shell pm list packages -f -3 | grep apk* > " + filePathPackages)
+			install = []
+			uninstall = []
+			fichierTemoin = open(filePathTemoin, 'r')
+			fichierAutreTab = open(filePathPackages, 'r')
+			contentfichierTemoin = fichierTemoin.readlines()
+			contentfichierAutre = fichierAutreTab.readlines()
+
+			for package in contentfichierAutre:
+				if package not in contentfichierTemoin:
+					uninstall.append(package)
+			for packet in contentfichierTemoin:
+				if packet not in contentfichierAutre:
+					install.append(packet)
+
+			fichierTemoin.close()
+			fichierAutreTab.close()
+			for uninstallPack in uninstall:
+				uninstallPackSplit = uninstallPack.split("=")
+				uninstallPack = uninstallPackSplit[1]
+				uninstallRemoveCR = uninstallPack.replace("\r", "")
+				packageToUninstall = uninstallRemoveCR.replace("\n", "")
+				command = "adb -s " + serialNo + " uninstall " + packageToUninstall
+				print command
+				result = os.popen(command).read()
+				print result
+			for installPack in install:
+				installPackSplit = installPack.split("=")
+				installPack = installPackSplit[0]
+				packageToInstall = filePathAPKs + "/" + installPack.replace("package:/data/app/", "")
+				resultat = os.popen("adb -s " + serialNo + " install " + packageToInstall).read()
+				print resultat
+
+	def close_windows(self):
+		self.destroy()
+		self.master.withdraw()
 
 ##ADD APPS
 class AddAppsFirst(Frame):
@@ -303,7 +433,6 @@ class AddAppsFirst(Frame):
 		self.master.withdraw()
 		self.newWindow = Toplevel(self.master)
 		self.app = AddAppsConfirm(self.newWindow)
-
 
 class AddAppsConfirm(Frame):
 	def __init__(self,master):
@@ -338,6 +467,7 @@ class AddAppsConfirm(Frame):
 
 	def installApp(self):
 		global pathToApp
+		print pathToApp
 		resultat = os.popen("adb install " + pathToApp).read()
 		print resultat
 		self.destroy()
@@ -347,9 +477,6 @@ class AddAppsConfirm(Frame):
 			Failure(self.newWindow)
 		else:
 			Success(self.newWindow)
-
-
-
 
 ##MAIN MENU
 class MainMenu(Frame):
@@ -364,7 +491,7 @@ class MainMenu(Frame):
 		self.canvas.create_image(0, 0, anchor=NW, image=self.photo)
 		self.canvas.pack()
 
-		self.texteWifiFirst = Label(self, text="Attention: Veuillez d'abord connecter tous vos appareils en wifi.", fg="red").pack(pady=5)
+		self.texteWifiFirst = Label(self, text="Note: pour la plupart des applications, veuillez ne brancher\n qu'une seule tablette, sauf contre-indication.", fg="red").pack(pady=5)
 
 		self.frame = Frame(self)
 
@@ -405,7 +532,6 @@ class MainMenu(Frame):
 		afterPluggedCommand="add"
 		self.newWindow = Toplevel(self.master)
 		self.app = PlugTablet(self.newWindow)
-
 
 def main():
 	root = Tk()
