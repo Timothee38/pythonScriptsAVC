@@ -85,6 +85,8 @@ class PlugTablet(Frame):
                 self.app = AddAppsFirst(self.newWindow)
             elif afterPluggedCommand == "wifi":
                 self.app = WifiFirst(self.newWindow)
+            elif afterPluggedCommand == "clone":
+                self.app = GetTemoin(self.newWindow)
 
 
 ##WIFI
@@ -359,11 +361,13 @@ class GetTemoin(Frame):
         global filePathTemoin, filePathAPKs
         os.system("adb.exe shell pm list packages -f -3 > " + filePathTemoin)
         fichierTemoin = open(filePathTemoin, 'r')
-        os.system("cd " + filePathAPKs)
+        command = 'cd "' + filePathAPKs + '"'
+        print command
+        os.system(command)
         for ligne in fichierTemoin.readlines():
             package = ligne.split("=")
             toPull = package[0].split(":")
-            os.system("adb.exe pull " + toPull[1] + " " + filePathAPKs)
+            os.system("adb.exe pull " + toPull[1] + ' "' + filePathAPKs + '"')
 
             fichierTemoin.close()
 
@@ -454,9 +458,9 @@ class HowMany(Frame):
             if "\tdevice" in ligne:
                 devices.append(ligne)
 
-            texte = "Il y a " + str(len(devices)) + u" appareils connectés..."
-            self.howmany = Label(self, text=texte)
-            self.howmany.pack(padx=5)
+        texte = "Il y a " + str(len(devices)) + u" appareils connectés..."
+        self.howmany = Label(self, text=texte)
+        self.howmany.pack(padx=5)
 
     def close_windows(self):
         self.destroy()
@@ -478,6 +482,7 @@ class DoOperations(Frame):
         self.canvas.pack()
 
         self.texte = Label(self, text=u"Machines clonées avec succès !")
+        self.texte.pack()
 
         self.boutonOk = Button(self, text="Ok", command=self.close_windows)
         self.boutonOk.pack(pady=(5, 10))
@@ -521,7 +526,7 @@ class DoOperations(Frame):
                         installPackSplit = installPack.split("=")
                         installPack = installPackSplit[0]
                         packageToInstall = filePathAPKs + "/" + installPack.replace("package:/data/app/", "")
-                        resultat = os.popen("adb.exe -s " + serialNo + " install " + packageToInstall).read()
+                        resultat = os.popen("adb.exe -s " + serialNo + ' install "' + packageToInstall + '"').read()
                         print resultat
 
     def close_windows(self):
