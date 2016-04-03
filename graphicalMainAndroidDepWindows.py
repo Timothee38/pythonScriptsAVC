@@ -46,14 +46,14 @@ class PlugTablet(Frame):
         Frame.__init__(self, master)
         self.master = master
 
-        self.image = Image.open("plugin.png")
+        self.image = Image.open("img\\plugin.png")
         self.photo = ImageTk.PhotoImage(self.image)
 
         self.canvas = Canvas(self, width=440, height=214)
         self.canvas.create_image(0, 0, anchor=NW, image=self.photo)
         self.canvas.pack()
 
-        self.brancher = Label(self, text="Brancher la tablette par USB et cliquez sur OK.")
+        self.brancher = Label(self, text="Brancher votre appareil par USB et cliquez sur OK.")
         self.brancher.pack(pady=5, padx=5)
 
         self.boutonOk = Button(self, text="Ok", command=self.close_windows)
@@ -95,7 +95,7 @@ class WifiFirst(Frame):
         Frame.__init__(self, master)
         # Success because testing purposes
         self.master = master
-        self.image = Image.open("wifi.png")
+        self.image = Image.open("img\\wifi.png")
         self.photo = ImageTk.PhotoImage(self.image)
         self.label = Label(self, text="L'appareil à été connecté avec succès.")
         self.ipLabel = Label(self, text="Votre ip est x.x.x.x")
@@ -124,7 +124,7 @@ class DeleteAppsCheckboxes(Frame):
         Frame.__init__(self, master)
         self.master = master
 
-        self.image = Image.open("delete.png")
+        self.image = Image.open("img\\delete.png")
         self.photo = ImageTk.PhotoImage(self.image)
 
         self.canvas = Canvas(self, width=400, height=130)
@@ -181,7 +181,7 @@ class Success(Frame):
         Frame.__init__(self, master)
         self.master = master
 
-        self.image = Image.open("AndroidSuccess.png")
+        self.image = Image.open("img\\AndroidSuccess.png")
         self.photo = ImageTk.PhotoImage(self.image)
 
         self.canvas = Canvas(self, width=350, height=275)
@@ -207,7 +207,7 @@ class Failure(Frame):
         Frame.__init__(self, master)
         self.master = master
 
-        self.image = Image.open("AndroidFailure.png")
+        self.image = Image.open("img\\AndroidFailure.png")
         self.photo = ImageTk.PhotoImage(self.image)
 
         self.canvas = Canvas(self, width=350, height=275)
@@ -234,7 +234,7 @@ class AddAppsFirst(Frame):
         Frame.__init__(self, master)
         self.master = master
 
-        self.image = Image.open("FileUpload.png")
+        self.image = Image.open("img\\FileUpload.png")
         self.photo = ImageTk.PhotoImage(self.image)
 
         self.canvas = Canvas(self, width=330, height=170)
@@ -268,7 +268,7 @@ class AddAppsConfirm(Frame):
         apkList = pathToApp.split("/")
         apkName = apkList[-1]
 
-        self.image = Image.open("androidQuestion.png")
+        self.image = Image.open("img\\androidQuestion.png")
         self.photo = ImageTk.PhotoImage(self.image)
 
         self.canvas = Canvas(self, width=174, height=70)
@@ -307,40 +307,12 @@ class AddAppsConfirm(Frame):
 
 
 ##CLONE DEVICE
-class Clone(Frame):
-    def __init__(self, master):
-        Frame.__init__(self, master)
-        self.master = master
-
-        self.image = Image.open("plugin.png")
-        self.photo = ImageTk.PhotoImage(self.image)
-
-        self.canvas = Canvas(self, width=440, height=214)
-        self.canvas.create_image(0, 0, anchor=NW, image=self.photo)
-        self.canvas.pack()
-
-        self.brancher = Label(self, text="Brancher la tablette par USB et cliquez sur OK.")
-        self.brancher.pack(pady=5, padx=5)
-
-        self.boutonOk = Button(self, text="Ok", command=self.close_windows)
-        self.boutonOk.pack(pady=(5, 10))
-
-        self.pack()
-
-    def close_windows(self):
-        self.destroy()
-        self.master.withdraw()
-
-    # self.newWindow = Toplevel(self.master)
-    # self.app = GetTemoin(self.newWindow)
-
-
 class GetTemoin(Frame):
     def __init__(self, master):
         Frame.__init__(self, master)
         self.master = master
 
-        self.image = Image.open("file-transfer.png")
+        self.image = Image.open("img\\file-transfer.png")
         self.photo = ImageTk.PhotoImage(self.image)
 
         self.canvas = Canvas(self, width=400, height=310)
@@ -383,7 +355,7 @@ class UnPlugTemoin(Frame):
         Frame.__init__(self, master)
         self.master = master
 
-        self.image = Image.open("plugin.png")
+        self.image = Image.open("img\\plugin.png")
         self.photo = ImageTk.PhotoImage(self.image)
 
         self.canvas = Canvas(self, width=440, height=214)
@@ -410,7 +382,7 @@ class BranchementAutres(Frame):
         Frame.__init__(self, master)
         self.master = master
 
-        self.image = Image.open("multiple.png")
+        self.image = Image.open("img\\multiple.png")
         self.photo = ImageTk.PhotoImage(self.image)
 
         self.canvas = Canvas(self, width=450, height=336)
@@ -437,7 +409,7 @@ class HowMany(Frame):
         Frame.__init__(self, master)
         self.master = master
 
-        self.image = Image.open("androidQuestion.png")
+        self.image = Image.open("img\\androidQuestion.png")
         self.photo = ImageTk.PhotoImage(self.image)
 
         self.canvas = Canvas(self, width=174, height=150)
@@ -474,7 +446,7 @@ class DoOperations(Frame):
         Frame.__init__(self, master)
         self.master = master
 
-        self.image = Image.open("AndroidSuccess.png")
+        self.image = Image.open("img\\AndroidSuccess.png")
         self.photo = ImageTk.PhotoImage(self.image)
 
         self.canvas = Canvas(self, width=350, height=275)
@@ -540,14 +512,14 @@ class MainMenu(Frame):
         Frame.__init__(self, master)
         self.master = master
 
-        self.image = Image.open("android-logo-png.png")
+        self.image = Image.open("img\\android-logo-png.png")
         self.photo = ImageTk.PhotoImage(self.image)
 
         self.canvas = Canvas(self, width=580, height=320)
         self.canvas.create_image(0, 0, anchor=NW, image=self.photo)
         self.canvas.pack()
 
-        self.texteWifiFirst = Label(self, text="Attention: Veuillez d'abord configurer tous vos appareils en wifi.",
+        self.texteWifiFirst = Label(self, text="Note: pour la plupart des applications, veuillez ne brancher\n qu'une seule tablette, sauf contre-indication.",
                                     fg="red").pack(pady=5)
 
         self.frame = Frame(self)
@@ -562,7 +534,7 @@ class MainMenu(Frame):
 
         # self.wifiBtn = Button(self.frameBas, text="Connection wifi", width=20, height=3, command=self.openWifi).pack(side=LEFT,padx=5)
 
-        self.cloneBtn = Button(self.frameBas, text="Cloner une tablette témoin", width=47, height=3,
+        self.cloneBtn = Button(self.frameBas, text="Cloner vos appareils", width=47, height=3,
                                command=self.openClone).pack()
 
         self.frame.pack()
@@ -600,6 +572,7 @@ def main():
     root = Tk()
     app = MainMenu(root)
     root.title(u"Déploiement Android")
+    root.iconbitmap("img\\icone.ico")
     root.resizable(height=FALSE, width=FALSE)
     root.mainloop()
     root.destroy()
